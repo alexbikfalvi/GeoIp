@@ -1,7 +1,12 @@
 package edu.upf.nets.mercury.geoip.test;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import com.maxmind.geoip.Country;
+import com.maxmind.geoip.Location;
+import com.maxmind.geoip.LookupService;
 
 import edu.upf.nets.mercury.geoip.net.AsyncWebRequest;
 import edu.upf.nets.mercury.geoip.net.IAsyncCallback;
@@ -21,10 +26,15 @@ public class GeoIpTest implements IAsyncCallback {
 	public static void main(String[] args) {
 		GeoIpTest test = new GeoIpTest();
 		
-		test.execute();
+		/*
+		 * Execute the asynchronous request.
+		 * test.executeAsyncWeb();
+		 */
+		
+		test.executeMaxMind();
 	}
 	
-	public void execute() {
+	public void executeAsyncWeb() {
 		try {
 			// Create the request URL.
 			URL url = new URL("http://www.google.com/");
@@ -47,6 +57,26 @@ public class GeoIpTest implements IAsyncCallback {
 		catch(Exception exception) {
 			System.err.println(exception.getMessage());
 		}		
+	}
+	
+	public void executeMaxMind() {
+		try {
+			LookupService ls = new LookupService("c:/Users/Alex/Projects/Mercury/GeoIp/data/GeoLiteCity.dat");
+			
+			//Country country = ls.getCountry("151.38.39.114");
+			Location location = ls.getLocation("151.38.39.114");
+			
+			//System.out.println(country.getCode());
+			//System.out.println(country.getName());
+			System.out.println(location.countryName);
+			System.out.println(location.countryName);
+			System.out.println(location.countryCode);
+			System.out.println(location.latitude);
+			System.out.println(location.longitude);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
