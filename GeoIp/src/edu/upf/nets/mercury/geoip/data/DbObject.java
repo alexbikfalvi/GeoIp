@@ -77,6 +77,8 @@ public class DbObject {
 	 * @throws IllegalAccessException
 	 */
 	public final static <T extends DbObject> T create(DBObject object, Class<T> c) throws InstantiationException, IllegalAccessException {
+		// If the object is null, return null.
+		if (null == object) return null;
 		// Create a new instance of the target class.
 		T value = c.newInstance();
 		// Set all fields of the value object.

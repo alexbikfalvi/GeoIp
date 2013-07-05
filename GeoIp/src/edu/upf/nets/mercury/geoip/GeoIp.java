@@ -54,10 +54,6 @@ public class GeoIp {
 		this.onSaveConfig();
 	}
 	
-	public void updateGeoLiteCountry() {
-		
-	}
-	
 	// Protected methods.
 	
 	/**
@@ -66,7 +62,12 @@ public class GeoIp {
 	protected void onLoadConfig() {
 		// Get the most recent database configuration object.
 		try {
-			
+			// Get the configuration object from the database.
+			this.config = this.db.findOne(DbConfig.class, DbClient.collectionConfig);
+			// If the configuration object is null, use the default configuration.
+			if (null == this.config) {
+				this.config = new DbConfig();
+			}
 		}
 		catch (Exception exception) {
 			// If an exception occurred, use the default configuration.

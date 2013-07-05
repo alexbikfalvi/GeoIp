@@ -3,7 +3,6 @@ package edu.upf.nets.mercury.geoip.data;
 import java.net.UnknownHostException;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 /**
@@ -47,6 +46,13 @@ public class DbClient {
 		return this.database;
 	}
 	
+	/**
+	 * Finds one object in the specified collection.
+	 * @param c The class type for the searched object.
+	 * @param name The collection name.
+	 * @return The object from the collection, or null if the collection is empty.
+	 * @throws DbException
+	 */
 	public final <T extends DbObject> T findOne(Class<T> c, String name) throws DbException {
 		try {
 			// Get the collection with the specified name.
@@ -68,9 +74,10 @@ public class DbClient {
 	}
 
 	/**
-	 * Inserts the database object in the specified collection.
-	 * @param name
-	 * @param object
+	 * Inserts the database object in the specified collection. The collection is created if
+	 * it does not exist.
+	 * @param name The collection name.
+	 * @param object The object to insert.
 	 * @throws DbException
 	 */
 	public final void insert(String name, DbObject object) throws DbException {
