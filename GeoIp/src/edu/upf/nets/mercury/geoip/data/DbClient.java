@@ -5,7 +5,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.WriteResult;
 
 /**
  * A class representing the middle-layer to the MongoDB database. 
@@ -48,29 +47,75 @@ public class DbClient {
 		return this.database;
 	}
 	
-	public final void insert(String name, DBObject object) {
-		// Get the collection with the specified name.
-		DBCollection collection = this.database.getCollection(name);
-		// If the collection does not exist.
-		if (null == collection) {
-			// Create the collection with the specified object.
-			collection = this.database.createCollection(name, object);
+	public final <T extends DbObject> T findOne(Class<T> c, String name) throws DbException {
+		try {
+			// Get the collection with the specified name.
+			DBCollection collection = this.database.getCollection(name);
+			// If the collection does not exist.
+			if (null == collection) {
+				// Throw a database exception.
+				throw new DbException("The collection \'" + name + "\' was not found.");
+			}
+			else {
+				// Return 
+				return DbObject.create(collection.findOne(), c);
+			}
 		}
-		else {
-			// Insert the element into the existing collection.
-			collection.insert(object);
+		catch (Exception exception) {
+			// Throw a database exception.
+			throw new DbException("The database operation failed.", exception);
+		}
+	}
+
+	/**
+	 * Inserts the database object in the specified collection.
+	 * @param name
+	 * @param object
+	 * @throws DbException
+	 */
+	public final void insert(String name, DbObject object) throws DbException {
+		try {
+			// Get the collection with the specified name.
+			DBCollection collection = this.database.getCollection(name);
+			// If the collection does not exist.
+			if (null == collection) {
+				// Create the collection with the specified object.
+				collection = this.database.createCollection(name, object.get());
+			}
+			else {
+				// Insert the element into the existing collection.
+				collection.insert(object.get());
+			}
+		}
+		catch (Exception exception) {
+			// Throw a database exception.
+			throw new DbException("The database operation failed.", exception);
 		}
 	}
 	
-	public final long count(String name) {
-		// Get the collection with the specified name.
-		DBCollection collection = this.database.getCollection(name);
-		// If the collection does not exist.
-		if (null == collection) {
-			return 0;
+	/**
+	 * Returns the number of objects in the specified collection.
+	 * @param name The collection name.
+	 * @return The number of elements in the collection, or zero if the collection does not exist.
+	 * @throws DbException
+	 */
+	public final long count(String name) throws DbException {
+		try {
+			// Get the collection with the specified name.
+			DBCollection collection = this.database.getCollection(name);
+			// If the collection does not exist.
+			if (null == collection) {
+				// Return zero.
+				return 0;
+			}
+			else {
+				// Otherwise, return the collection count.
+				return collection.count();
+			}
 		}
-		else {
-			return collection.count();
+		catch (Exception exception) {
+			// Throw a database exception.
+			throw new DbException("The database operation failed.", exception);
 		}
 	}
 }

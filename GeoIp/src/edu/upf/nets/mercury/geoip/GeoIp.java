@@ -2,9 +2,9 @@ package edu.upf.nets.mercury.geoip;
 
 import org.apache.log4j.Logger;
 
-import com.mongodb.DBObject;
 import edu.upf.nets.mercury.geoip.data.DbClient;
 import edu.upf.nets.mercury.geoip.data.DbConfig;
+import edu.upf.nets.mercury.geoip.data.DbException;
 
 /**
  * A class used to download and manage the GeoIP data.
@@ -22,13 +22,25 @@ public class GeoIp {
 		// Save the database.
 		this.db = db;
 		// Check if there exists a configuration in the database.
-		if(this.db.count(DbClient.collectionConfig) != 0) {
-			// Load the most recent configuration from the database.
-			this.onLoadConfig();
+		try {
+			if(this.db.count(DbClient.collectionConfig) != 0) {
+				// Load the most recent configuration from the database.
+				this.onLoadConfig();
+				// Log the operation.
+				GeoIp.log.info("Loaded the GeoIP configuration from the MongoDB database.");
+			}
+			else {
+				// Use the default configuration.
+				this.onDefaultConfig();
+				// Log the operation.
+				GeoIp.log.info("Loaded the default GeoIP configuration because no data could be found in the MongoDB database.");
+			}
 		}
-		else {
+		catch (DbException exception) {
 			// Use the default configuration.
 			this.onDefaultConfig();
+			// Log the operation.
+			GeoIp.log.warn("Loaded the default GeoIP configuration because access to the MongoDB database failed.", exception);
 		}
 	}
 	
@@ -53,6 +65,15 @@ public class GeoIp {
 	 */
 	protected void onLoadConfig() {
 		// Get the most recent database configuration object.
+		try {
+			
+		}
+		catch (Exception exception) {
+			// If an exception occurred, use the default configuration.
+			this.onDefaultConfig();
+			// Log the event.
+			GeoIp.log.warn("Cannot load the GeoIP configuration from the MongoDB database (" + exception.getMessage() + "). Using the default configuration.", exception);
+		}
 	}
 	
 	/**
@@ -60,19 +81,12 @@ public class GeoIp {
 	 */
 	protected void onSaveConfig() {
 		try {
-			// Get the database object corresponding to the configuration object.
-			DBObject object = this.config.get();
 			// Save the configuration to the database.
-			this.db.insert(DbClient.collectionConfig, object);		
-		}
-		catch (IllegalArgumentException exception) {
-			GeoIp.log.error("Cannot save the GeoIP configuration to the MongoDB database (" + exception.getMessage() + ").", exception);
-		}
-		catch (IllegalAccessException exception) {
-			GeoIp.log.error("Cannot save the GeoIP configuration to the MongoDB database (" + exception.getMessage() + ").", exception);
+			this.db.insert(DbClient.collectionConfig, this.config);		
 		}
 		catch (Exception exception) {
-			GeoIp.log.error("Cannot save the GeoIP configuration to the MongoDB database (" + exception.getMessage() + ").", exception);
+			// Log the event.
+			GeoIp.log.warn("Cannot save the GeoIP configuration to the MongoDB database (" + exception.getMessage() + ").", exception);
 		}
 	}
 	

@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import com.maxmind.geoip.Country;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 
@@ -104,7 +103,6 @@ public class GeoIpTest implements IAsyncCallback {
 	
 	@Override
 	public void callback(IAsyncResult result) {
-		// TODO Auto-generated method stub
 		try {
 			// Complete the request.
 			String data = result.getResponseString();

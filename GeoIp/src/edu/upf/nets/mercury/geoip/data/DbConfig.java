@@ -18,7 +18,7 @@ public class DbConfig extends DbObject {
 
 	// Public fields.
 	
-	private Date date;
+	public Date date;
 	public String urlCountryIpv4;
 	public String urlCountryIpv6;
 	public String urlCityIpv4;
