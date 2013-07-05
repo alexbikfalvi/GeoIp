@@ -41,7 +41,7 @@ public class AsyncWebRequest {
 	/**
 	 * Closes the current request.
 	 */
-	public void close() {
+	public final void close() {
 		this.executorService.shutdown();
 	}
 }

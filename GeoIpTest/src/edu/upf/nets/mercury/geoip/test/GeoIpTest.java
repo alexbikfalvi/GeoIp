@@ -3,11 +3,14 @@ package edu.upf.nets.mercury.geoip.test;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import com.maxmind.geoip.Country;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 
+import edu.upf.nets.mercury.geoip.GeoIp;
+import edu.upf.nets.mercury.geoip.data.DbClient;
 import edu.upf.nets.mercury.geoip.net.AsyncWebRequest;
 import edu.upf.nets.mercury.geoip.net.IAsyncCallback;
 import edu.upf.nets.mercury.geoip.net.IAsyncResult;
@@ -31,7 +34,9 @@ public class GeoIpTest implements IAsyncCallback {
 		 * test.executeAsyncWeb();
 		 */
 		
-		test.executeMaxMind();
+		//test.executeMaxMind();
+		
+		test.executeMongo();
 	}
 	
 	public void executeAsyncWeb() {
@@ -75,6 +80,24 @@ public class GeoIpTest implements IAsyncCallback {
 			System.out.println(location.longitude);
 			
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void executeMongo() {
+		DbClient db;
+		try {
+			db = new DbClient("localhost", "geoip");
+			try {
+				GeoIp geoIp = new GeoIp(db);
+				
+				geoIp.close();
+			}
+			finally {
+				db.close();
+			}
+		}
+		catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 	}

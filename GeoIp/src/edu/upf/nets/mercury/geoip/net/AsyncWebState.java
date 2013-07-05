@@ -70,7 +70,7 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	 * Returns the callback object of the asynchronous state.
 	 * @return The callback object.
 	 */
-	public IAsyncCallback getCallback() {
+	public final IAsyncCallback getCallback() {
 		return this.callback;
 	}
 	
@@ -78,7 +78,7 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	 * Returns the exception that occurred during the execution of the asynchronous operation.
 	 * @return The exception.
 	 */
-	public Exception getException() {
+	public final Exception getException() {
 		return this.exception;
 	}
 		
@@ -86,7 +86,7 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	 * Returns the URL of the asynchronous state.
 	 * @return The URL.
 	 */
-	public URL getUrl() {
+	public final URL getUrl() {
 		return this.url;
 	}
 	
@@ -94,7 +94,7 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	 * Indicates whether the asynchronous operation has completed or not.
 	 * @return True if the asynchronous operation has completed or false otherwise.
 	 */
-	public boolean isCompleted() {
+	public final boolean isCompleted() {
 		synchronized (this.lock) {
 			return this.completed;
 		}
@@ -104,7 +104,7 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	 * Waits for the asynchronous operation to complete.
 	 * @throws InterruptedException
 	 */
-	public void asyncWait() throws InterruptedException {
+	public final void asyncWait() throws InterruptedException {
 		synchronized (this.lock) {
 			if(!this.completed) this.lock.wait();
 			else return;
@@ -116,7 +116,7 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	 * @param timeout The time interval in milliseconds.
 	 * @throws InterruptedException
 	 */
-	public void asyncWait(long timeout) throws InterruptedException {
+	public final void asyncWait(long timeout) throws InterruptedException {
 		synchronized (this.lock) {
 			if(!this.completed) this.lock.wait(timeout);
 			else return;
@@ -126,7 +126,7 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	/**
 	 * This method executes the web request.
 	 */
-	public void run() {
+	public final void run() {
 		try {
 			// Create a new connection for the given URL.
 			HttpURLConnection connection = (HttpURLConnection) this.url.openConnection();
