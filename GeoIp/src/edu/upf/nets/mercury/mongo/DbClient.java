@@ -1,4 +1,4 @@
-package edu.upf.nets.mercury.geoip.data;
+package edu.upf.nets.mercury.mongo;
 
 import java.net.UnknownHostException;
 import com.mongodb.DB;
@@ -72,7 +72,7 @@ public class DbClient {
 			throw new DbException("The database operation failed.", exception);
 		}
 	}
-
+	
 	/**
 	 * Inserts the database object in the specified collection. The collection is created if
 	 * it does not exist.
@@ -96,8 +96,34 @@ public class DbClient {
 		}
 		catch (Exception exception) {
 			// Throw a database exception.
-			throw new DbException("The database operation failed.", exception);
+			throw new DbException("The database INSERT operation failed.", exception);
 		}
+	}
+	
+	/**
+	 * Saves the database object in the specified collection. The collection is created if
+	 * it does not exist, and the object is inserted, if added for the first time.
+	 * @param name The collection name.
+	 * @param object The object to save or insert.
+	 */
+	public final void save(String name, DbObject object) throws DbException {
+		try {
+			// Get the collection with the specified name.
+			DBCollection collection = this.database.getCollection(name);
+			// If the collection does not exist.
+			if (null == collection) {
+				// Create the collection with the specified object.
+				collection = this.database.createCollection(name, object.get());
+			}
+			else {
+				// Insert the element into the existing collection.
+				collection.save(object.get());
+			}
+		}
+		catch (Exception exception) {
+			// Throw a database exception.
+			throw new DbException("The database SAVE operation failed.", exception);
+		}		
 	}
 	
 	/**

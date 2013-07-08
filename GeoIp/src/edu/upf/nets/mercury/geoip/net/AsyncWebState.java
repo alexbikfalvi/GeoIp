@@ -16,6 +16,7 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	
 	// Request objects.
 	private URL url;
+	private Object state;
 	private IAsyncCallback callback;
 	private Exception exception = null;
 	private boolean completed = false;
@@ -29,10 +30,12 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	 * Creates a new asynchronous web state instance.
 	 * @param url The request URL.
 	 * @param callback The callback object.
+	 * @param state The user state.
 	 */
-	public AsyncWebState(URL url, IAsyncCallback callback) {
+	public AsyncWebState(URL url, IAsyncCallback callback, Object state) {
 		this.url = url;
 		this.callback = callback;
+		this.state = state;
 	}
 	
 	/**
@@ -72,6 +75,14 @@ public class AsyncWebState implements IAsyncResult, Runnable {
 	 */
 	public final IAsyncCallback getCallback() {
 		return this.callback;
+	}
+	
+	/**
+	 * Returns the user state.
+	 * @return The user state.
+	 */
+	public final Object getState() {
+		return this.state;
 	}
 	
 	/**

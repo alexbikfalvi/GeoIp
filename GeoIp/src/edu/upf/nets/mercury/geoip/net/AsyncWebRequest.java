@@ -25,11 +25,12 @@ public class AsyncWebRequest {
 	 * Begins an asynchronous web request for the specified web URL.
 	 * @param url The URL.
 	 * @param callback The callback object.
+	 * @param state The user state.
 	 * @return The result of the asynchronous operation.
 	 */
-	public IAsyncResult execute(URL url, IAsyncCallback callback) {
+	public IAsyncResult execute(URL url, IAsyncCallback callback, Object state) {
 		// Create the state of the asynchronous operation.
-		AsyncWebState asyncState = new AsyncWebState(url, callback);
+		AsyncWebState asyncState = new AsyncWebState(url, callback, state);
 		
 		// Begin executing the request on the thread pool.
 		this.executorService.execute(asyncState);

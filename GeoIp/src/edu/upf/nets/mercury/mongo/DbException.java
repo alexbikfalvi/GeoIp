@@ -1,4 +1,4 @@
-package edu.upf.nets.mercury.geoip.data;
+package edu.upf.nets.mercury.mongo;
 
 /**
  * A class representing a database exception.

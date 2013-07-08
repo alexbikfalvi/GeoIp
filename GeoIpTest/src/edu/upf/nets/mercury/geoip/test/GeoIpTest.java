@@ -5,11 +5,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
+import com.maxmind.geoip.Country;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 
+import edu.upf.nets.mercury.mongo.DbClient;
+
 import edu.upf.nets.mercury.geoip.GeoIp;
-import edu.upf.nets.mercury.geoip.data.DbClient;
 import edu.upf.nets.mercury.geoip.net.AsyncWebRequest;
 import edu.upf.nets.mercury.geoip.net.IAsyncCallback;
 import edu.upf.nets.mercury.geoip.net.IAsyncResult;
@@ -28,14 +30,7 @@ public class GeoIpTest implements IAsyncCallback {
 	public static void main(String[] args) {
 		GeoIpTest test = new GeoIpTest();
 		
-		/*
-		 * Execute the asynchronous request.
-		 * test.executeAsyncWeb();
-		 */
-		
-		//test.executeMaxMind();
-		
-		test.executeMongo();
+		test.executeGeoIp();
 	}
 	
 	public void executeAsyncWeb() {
@@ -47,7 +42,7 @@ public class GeoIpTest implements IAsyncCallback {
 			AsyncWebRequest request = new AsyncWebRequest();
 			
 			// Begin the request.
-			IAsyncResult result = request.execute(url, this);
+			IAsyncResult result = request.execute(url, this, null);
 			
 			// Wait for the request to complete.
 			result.asyncWait();
@@ -83,16 +78,37 @@ public class GeoIpTest implements IAsyncCallback {
 		}
 	}
 	
-	public void executeMongo() {
+	public void executeGeoIp() {
+		// The MongoDB client object.
 		DbClient db;
 		try {
+			// Create the MongoDB client object.
 			db = new DbClient("localhost", "geoip");
 			try {
+				// Create the GeoIP database object.
 				GeoIp geoIp = new GeoIp(db);
 				
+				// Update a database with data from the GeoIP database.
+				try {
+					// Execute the update without a callback function.
+					IAsyncResult result = geoIp.getDatabaseCountryIpv4().update(geoIp.getConfig().urlCountryIpv4, null);
+					// Wait for the update to complete.
+					result.asyncWait();
+					Country country = geoIp.getDatabaseCountryIpv4().getService().getCountry("151.38.39.114");
+					System.out.println(country.getName());
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+				
+				// Close the GeoIP database object.
 				geoIp.close();
 			}
 			finally {
+				// Close the MongoDB database object.
 				db.close();
 			}
 		}
